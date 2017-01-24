@@ -21,6 +21,13 @@ module MarketBot
         return results
       end
 
+      def store_collection_url
+        url = "https://play.google.com/store/apps/developer?"
+        url << "id=#{URI.escape(@collection)}"
+
+        url
+      end
+
       def update(opts={})
         super(opts)
         @result.each { |r| r.delete(:rank) }

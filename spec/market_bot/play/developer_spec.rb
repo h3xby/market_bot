@@ -41,11 +41,9 @@ describe MarketBot::Play::Developer do
     dev = MarketBot::Play::Developer.new(name)
     code = 200
 
-    dev.store_urls.each_with_index do |url, i|
-      html = read_play_data('developer-zynga.txt')
-      response = Typhoeus::Response.new(code: code, headers: '', body: html)
-      Typhoeus.stub(url).and_return(response)
-    end
+    html = read_play_data('developer-zynga.txt')
+    response = Typhoeus::Response.new(code: code, headers: '', body: html)
+    Typhoeus.stub(dev.store_collection_url).and_return(response)
 
     dev.update
   end

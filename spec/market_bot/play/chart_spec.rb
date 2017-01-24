@@ -95,11 +95,11 @@ describe MarketBot::Play::Chart do
     chart = MarketBot::Play::Chart.new(collection, category, max_pages: 7)
     code = 200
 
-    chart.store_urls.each_with_index do |url, i|
+    responses = (1..7).map do |i|
       html = read_play_data("chart-topselling_paid-GAME_ARCADE-#{i}.txt")
-      response = Typhoeus::Response.new(code: code, headers: '', body: html)
-      Typhoeus.stub(url).and_return(response)
+      Typhoeus::Response.new(code: code, headers: '', body: html)
     end
+    Typhoeus.stub(chart.store_collection_url).and_return(responses)
 
     chart.update
 
@@ -113,11 +113,11 @@ describe MarketBot::Play::Chart do
     chart = MarketBot::Play::Chart.new(collection, category, max_pages: 7, country: 'jp', lang: 'ja')
     code = 200
 
-    chart.store_urls.each_with_index do |url, i|
+    responses = (1..7).map do |i|
       html = read_play_data("chart-jp-ja-topselling_paid-BUSINESS-#{i}.txt")
-      response = Typhoeus::Response.new(code: code, headers: '', body: html)
-      Typhoeus.stub(url).and_return(response)
+      Typhoeus::Response.new(code: code, headers: '', body: html)
     end
+    Typhoeus.stub(chart.store_collection_url).and_return(responses)
 
     chart.update
 
@@ -132,10 +132,8 @@ describe MarketBot::Play::Chart do
     code = 0
     html = ''
 
-    chart.store_urls.each_with_index do |url, i|
-      response = Typhoeus::Response.new(code: code, headers: '', body: html)
-      Typhoeus.stub(url).and_return(response)
-    end
+    response = Typhoeus::Response.new(code: code, headers: '', body: html)
+    Typhoeus.stub(chart.store_collection_url).and_return(response)
 
     expect {
       chart.update

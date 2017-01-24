@@ -80,14 +80,27 @@ module MarketBot
 				urls
 			end
 
+      def store_collection_url
+        url = 'https://play.google.com/store/apps'
+        url << "/category/#{@category}" if @category
+        url << "/collection/#{@collection}"
+
+        url
+      end
+
 			def update(opts={})
 				@result = []
 
-				store_urls.each do |url|
-					req = Typhoeus::Request.new(url, @request_opts)
-					req.run
+				start = 0
+				num = 100
 
-					break unless response_handler(req.response)
+				@max_pages.times do |i|
+          body = { start: start, num: num, xhr: 1, gl: @country, hl: @lang }
+          resp = Typhoeus::Request.post(store_collection_url, @request_opts.merge(body: body))
+
+					break unless response_handler(resp)
+
+					start += num
 				end
 
 				@result.flatten!
